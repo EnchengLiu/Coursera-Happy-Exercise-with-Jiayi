@@ -101,8 +101,8 @@ class TurtlebotMPC:
         N = self.N #MPC horizon
 
         #TODO: Declare these variables
-        self.X = ...
-        self.U = ...
+        self.X = self.opti.variable(3, N+1)
+        self.U = self.opti.variable(2, N)
 
     def add_input_constraint(self):
         """
@@ -124,6 +124,11 @@ class TurtlebotMPC:
         ****************************************
         """
         N = self.N #MPC horizon
+        
+        #TODO:
+        for i in range(N):
+            self.opti.subject_to(self.U[:, i] >= -10)
+            self.opti.subject_to(self.U[:, i] <= 10)
 
 
     def add_obs_constraint(self):
@@ -153,6 +158,10 @@ class TurtlebotMPC:
             radius = obs.get_radius()
             #Apply the obstacle constraint to ALL N+1 columns of X
             #TODO: YOUR CODE HERE
+            print(self.X)
+            for i in range(N+1):
+                dist = ca.sqrt((self.X[0, i] - center[0])**2 + (self.X[1, i] - center[1])**2)
+                self.opti.subject_to(dist >= radius)
                 
     def discrete_dyn(self, q, u):
         """
@@ -167,7 +176,8 @@ class TurtlebotMPC:
         dt = self.dt
 
         #TODO: YOUR CODE HERE: return q(k+1) using Euler discretization, given q_dot, q(k), and dt.
-        return 0
+        q_next = q + dt * q_dot
+        return q_next
 
     def add_dyn_constraint(self):
         """
@@ -193,9 +203,11 @@ class TurtlebotMPC:
         """
 
         #TODO: add initial condition constraint
-        
+        self.opti.subject_to(self.X[:, 0] == x0)
 
         #TODO: add dynamics constraint
+        for k in range(N):
+            self.opti.subject_to(self.X[:, k+1] == self.discrete_dyn(self.X[:, k], self.U[:, k]))
         
 
     def add_cost(self):
@@ -219,11 +231,17 @@ class TurtlebotMPC:
         """
 
         #Define P, Q, R matrices - you may use NumPy matrices for these - start with the Identity and go from there!
-        P = ...
-        Q = ...
-        R = ...
-
-        self.cost = ... #TODO: fill in this parameter!
+        P = np.eye(self.X.shape[0])
+        Q = np.eye(self.X.shape[0])
+        R = np.eye(self.U.shape[0])
+        self.cost=0
+        for i in range(N):
+            dx = self.X[:, i] - xd
+            du = self.U[:, i]
+            self.cost += dx.T @ Q @ dx + du.T @ R @ du
+        dx = self.X[:, N] - xd
+        self.cost += dx.T @ P @ dx
+        #TODO: fill in this parameter!
 
 
     def add_warm_start(self):
@@ -247,7 +265,9 @@ class TurtlebotMPC:
         Hint: Look at the numpy function linspace.
         """
         #TODO: provide a guess of the matrix of optimal states.
-        xGuess = ...
+        xGuess = np.array([x0])
+        for i in range(1,N):
+            xGuess = np.append(xGuess,x0+(xd-x0)*i/N)
 
         #Convert to correct Casadi type (do not edit)
         xGuess = ca.DM(xGuess) 
