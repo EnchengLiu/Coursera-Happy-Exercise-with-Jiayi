@@ -126,6 +126,7 @@ class TurtlebotMPC:
         N = self.N #MPC horizon
         
         #TODO:
+        print("Adding input constraints")
         for i in range(N):
             self.opti.subject_to(self.U[:, i] >= -10)
             self.opti.subject_to(self.U[:, i] <= 10)
@@ -218,6 +219,7 @@ class TurtlebotMPC:
 
         #get desired state
         xd = self.x_d
+        print(xd)
 
         """
         YOUR CODE HERE: 
@@ -231,15 +233,20 @@ class TurtlebotMPC:
         """
 
         #Define P, Q, R matrices - you may use NumPy matrices for these - start with the Identity and go from there!
-        P = np.eye(self.X.shape[0])
-        Q = np.eye(self.X.shape[0])
-        R = np.eye(self.U.shape[0])
+        P = np.array([[118,0. ,0.],[0. ,118 ,0.],[0. ,0. ,1.]])
+        
+        Q = np.array([[235 ,0. ,0.],[0. ,235 ,0.],[0. ,0. ,1.]])
+        R = np.array([[20. ,0.],[0. ,20.]])
+        print("P:",P,"Q:",Q,"R:",R)
         self.cost=0
         for i in range(N):
             dx = self.X[:, i] - xd
             du = self.U[:, i]
+            # print("dx:",dx) 
+            # print("du:",du)
             self.cost += dx.T @ Q @ dx + du.T @ R @ du
         dx = self.X[:, N] - xd
+        # print("last dx:",dx)
         self.cost += dx.T @ P @ dx
         #TODO: fill in this parameter!
 
@@ -265,10 +272,15 @@ class TurtlebotMPC:
         Hint: Look at the numpy function linspace.
         """
         #TODO: provide a guess of the matrix of optimal states.
-        xGuess = np.array([x0])
-        for i in range(1,N):
-            xGuess = np.append(xGuess,x0+(xd-x0)*i/N)
-
+        xGuess = np.array(x0)
+        # print("xGuess:",xGuess) 
+        for i in range(1,N+1):
+            # print(x0+(xd-x0)*i/N)
+            xGuess = np.hstack((xGuess,x0+(xd-x0)*i/N))
+        # print("xGuess:",xGuess[:,-1])
+        # print("N:",N)
+        # print(np.shape(xGuess))
+        # print(xGuess)
         #Convert to correct Casadi type (do not edit)
         xGuess = ca.DM(xGuess) 
         self.opti.set_initial(self.X, xGuess)
@@ -288,7 +300,7 @@ class TurtlebotMPC:
         self.initialize_variables()
         
         #Define constraint on/off switches
-        input_constr = False #Turn on input constraints
+        input_constr = True #Turn on input constraints
         obs_constr = True #Turn on barrier constraints
         
         #Add constraints

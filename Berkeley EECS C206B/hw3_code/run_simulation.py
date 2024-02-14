@@ -27,7 +27,7 @@ circle = Circle(r, c)
 xD = np.array([[4, 4, 0]]).T
 
 #define MPC Horizon
-N = 30
+N = 20
 
 #Create an MPC Controller
 controller = TurtlebotMPC(observer, [circle], xD, N = N)
