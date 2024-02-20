@@ -1,7 +1,7 @@
 import numpy as np
 import casadi as ca
 from collections import deque
-
+from matplotlib import pyplot as plt
 """
 File containing controllers 
 """
@@ -257,12 +257,9 @@ class TurtlebotMPC:
         """
         #get inital condition (x, y, phi vector)
         x0 = self.observer.get_state()
-
         #get desired state
         xd = self.x_d
-
         N = self.N #MPC horizon
-        
         """
         YOUR CODE HERE: Use NumPy to get a guess, called xGuess, for X, a matrix of N+1 states, whose columns
         are guesses for the optimal sequence of states that solve the optimiation problem.
@@ -273,7 +270,8 @@ class TurtlebotMPC:
         """
         #TODO: provide a guess of the matrix of optimal states.
         xGuess = np.array(x0)
-        # print("xGuess:",xGuess) 
+        
+        #linear interpolation between the initial condition and desired state
         for i in range(1,N+1):
             # print(x0+(xd-x0)*i/N)
             xGuess = np.hstack((xGuess,x0+(xd-x0)*i/N))
@@ -281,9 +279,21 @@ class TurtlebotMPC:
         # print("N:",N)
         # print(np.shape(xGuess))
         # print(xGuess)
+        
+        #plot the initial guess
+        fig, ax = plt.subplots()
+        x=xGuess[0,:]
+        y=xGuess[1,:]
+        ax.plot(x, y)
+        plt.title('Initial Guess')
+        plt.xlabel('x')
+        plt.ylabel('y')
+        plt.show()
+        
         #Convert to correct Casadi type (do not edit)
         xGuess = ca.DM(xGuess) 
         self.opti.set_initial(self.X, xGuess)
+        
         
     def setup(self):
         """
