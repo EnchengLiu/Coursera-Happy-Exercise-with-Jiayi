@@ -4,6 +4,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import newton
+from scipy.optimize import fsolve
 
 #problem1.1
 # Define the parameters
@@ -62,3 +63,17 @@ for i in k:
     print("k=",i,"  X_mhat=",X_mhat[-1], "  P_m=",P_m[-1], "  X_phat=",X_phat[-1], "P_p=",P_p[-1])
     print("The Posterior Varience at %d is %f" %(i,P_m[-1]))
     
+#problem 2.2
+def equations(vars):
+    x1, x2, x3 = vars
+    eq1 = x1 -x3**2*x1-1-x1**2*x3**2/(x1+3)
+    eq2 = x2-x1/(x1+3)
+    eq3 = 1-(1-x2)*x3
+    return [eq1, eq2, eq3]
+
+x1_guess = 1
+x2_guess = 1
+x3_guess = 1
+x_solution = fsolve(equations, (x1_guess, x2_guess, x3_guess))
+print("-1/(1-0.2885)",-1/(1-0.2885)-0.5,"1/(1-0.2885)-0.5",1/(1-0.2885)-0.5)
+print(x_solution)
