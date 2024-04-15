@@ -99,13 +99,17 @@ class TurtlebotFBLin:
         """
         #get the state of turtlebot i
         q = self.observer.get_state()
+        #q have the form [x, y, phi]
 
         #get the derivative of q of turtlebot i
         qDot = self.observer.get_vel()
-
+        #qDot have the form [xdot, ydot, thetadot]
+        #from file dynamics.py, the get_vel function returns the derivative of the state vector, just X0
+        
+        
         #get the trajectory states
         xD, vD, aD = self.trajectory.get_state(t)
-
+        # print("shape of xD: ", np.array(xD).shape, " shape of vD: ", np.array(vD).shape, " shape of aD: ", np.array(aD).shape)
         """
         TODO: Your code here:
         Apply feedback linearization to calculate the z input to the system.
@@ -114,16 +118,22 @@ class TurtlebotFBLin:
         """
 
         #form the augmented state vector.
-        qPrime = ...
+        qPrime = [q[0], q[1], qDot[0], qDot[1]]
 
         #form the augmented desired state vector
-        qPrimeDes = ...
-
+        
+        #Here the get_state function returns the desired state at time t,which return self.pos(t), self.vel(t), self.accel(t)
+        qPrimeDes = [xD[0], xD[1], vD[0], vD[1]]
+        #qPrimeDes = [xD, yD, phiD, vD]
+        
         #find a control input z to the augmented system
-        k1, k2 = ..., ... #pick k1, k2 s.t. eddot + k2 edot + k1 e = 0 has stable soln
-        e = ...
-        eDot = ...
-        z = ...
+        k1, k2 = 0.4, 1 #pick k1, k2 s.t. eddot + k2 edot + k1 e = 0 has stable soln
+        
+        # print("shape of qPrimeDes: ", np.array(qPrimeDes).shape," shape of qPrime: ", np.array(qPrime).shape)
+        e = np.array(qPrimeDes[:2]) - np.array(qPrime[:2])
+        eDot = np.array(qPrimeDes[2:]) - np.array(qPrime[2:])
+        z = k1 * e + k2 * eDot
+        # print("z from eval_z_input: ", z)
 
         #return the z input
         return z
@@ -136,6 +146,7 @@ class TurtlebotFBLin:
             z ((2x1) NumPy Array): z input to the system
         """
         qe = self.observer.get_state()
+        #q have the form [x, y, phi]
 
         """
         TODO: Your code here
@@ -144,17 +155,18 @@ class TurtlebotFBLin:
         """
 
         #get the current phi
-        phi = ...
+        phi = qe[2]
 
         #get the (xdot, ydot) velocity
-        qDot = ...
+        qDot = self.observer.get_vel()
         v = np.linalg.norm(qDot)
 
         #first, eval A(q)
-        Aq = np.array(...)
+        Aq = np.array([[np.cos(phi), -v*np.sin(phi)], [np.sin(phi), v*np.cos(phi)]])
 
         #invert to get the w input - use pseudoinverse to avoid problems
-        w = ...
+        # print("shape of np.linalg.pinv(Aq): ",? np.linalg.pinv(Aq).shape)
+        w = np.linalg.pinv(Aq)@z
 
         #return w input
         return w
@@ -168,6 +180,7 @@ class TurtlebotFBLin:
         """
         #get the z input to the system
         z = self.eval_z_input(t)
+        # print("z: ", z)
 
         #SET THE VALUE OF z in the DYNAMICS
         self.observer.dynamics.set_z(z, self.observer.index)
@@ -182,10 +195,10 @@ class TurtlebotFBLin:
         """
 
         #integrate the w1 term to get v
-        self.vDotInt = ...
+        self.vDotInt = self.vDotInt + w[0]*self.dt
 
         #return the [v, omega] input
-        self._u = ...
+        self._u = np.array([[self.vDotInt, w[1]]]).T
         return self._u
     
     def get_input(self):

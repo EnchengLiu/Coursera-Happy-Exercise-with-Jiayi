@@ -28,6 +28,8 @@ qD = gen_goal_state(N)
 
 #define a trajectory manager
 T = 10
+print("trajectory time: ", T)
+print("initial condition: ", q0)
 trajManager = TrajectoryManager(q0, qD, T, N)
 
 #Create a controller manager
