@@ -1,0 +1,7 @@
+set(proj2_pkg_SETUP_PY_SETUP_MODULE "setuptools")
+set(proj2_pkg_SETUP_PY_VERSION "0.1.0")
+set(proj2_pkg_SETUP_PY_SCRIPTS "")
+set(proj2_pkg_SETUP_PY_PACKAGES "proj2_pkg")
+set(proj2_pkg_SETUP_PY_PACKAGE_DIRS "src/proj2_pkg")
+set(proj2_pkg_SETUP_PY_MODULES "")
+set(proj2_pkg_SETUP_PY_MODULE_DIRS "")

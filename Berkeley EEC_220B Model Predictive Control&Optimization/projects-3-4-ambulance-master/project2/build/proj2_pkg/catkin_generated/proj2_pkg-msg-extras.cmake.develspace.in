@@ -1,0 +1,2 @@
+set(proj2_pkg_MESSAGE_FILES "/home/cc/ee106b/sp24/class/ee106b-abh/EECS-C206B/project2/src/proj2_pkg/msg/BicycleStateMsg.msg;/home/cc/ee106b/sp24/class/ee106b-abh/EECS-C206B/project2/src/proj2_pkg/msg/BicycleCommandMsg.msg")
+set(proj2_pkg_SERVICE_FILES "")

@@ -247,7 +247,7 @@ class TurtlebotCBFQP:
         kX = self.nominalController.get_input()
 
         #set up the optimization problem
-        opti = ...
+        opti = 
 
         #define the decision variable
         u = ...

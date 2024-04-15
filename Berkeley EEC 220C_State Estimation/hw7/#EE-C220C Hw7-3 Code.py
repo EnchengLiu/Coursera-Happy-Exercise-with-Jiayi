@@ -83,8 +83,6 @@ for A, H in zip(A_values, H_values):
     time_values = []
     x_hat_kf, P_kf = kalman_filter(z, A, Q, H, R)
     
-    
-    # For each particle number
     for Np in np_values:
         dM_temp = []
         time_temp = []
@@ -105,7 +103,6 @@ for A, H in zip(A_values, H_values):
             # Compute the computation time
             time_temp.append(end_time - start_time)
 
-        # Compute the average Mahalanobis distance and computation time
         dM_values.append(np.mean(dM_temp))
         time_values.append(np.mean(time_temp))
         

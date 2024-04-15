@@ -1,0 +1,2 @@
+proj2_pkg:stdr_simulator/stdr_gui:stdr_simulator/stdr_launchers:stdr_simulator/stdr_msgs:stdr_simulator/stdr_parser:stdr_simulator/stdr_resources:stdr_simulator/stdr_robot:stdr_simulator/stdr_samples:stdr_simulator/stdr_server:stdr_simulator/stdr_simulator
+-DCATKIN_DEVEL_PREFIX=/home/cc/ee106b/sp24/class/ee106b-abh/EECS-C206B/project2/devel -DCMAKE_INSTALL_PREFIX=/home/cc/ee106b/sp24/class/ee106b-abh/EECS-C206B/project2/install -G Unix Makefiles
