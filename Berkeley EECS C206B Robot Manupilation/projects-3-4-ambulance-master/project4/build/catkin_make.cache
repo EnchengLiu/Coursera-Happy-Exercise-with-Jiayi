@@ -1,2 +1,0 @@
-ik:move_arm:planning
--DCATKIN_DEVEL_PREFIX=/home/cc/ee106b/sp24/class/ee106b-abh/EECS-C206B/projects-3-4-ambulance/project4/devel -DCMAKE_INSTALL_PREFIX=/home/cc/ee106b/sp24/class/ee106b-abh/EECS-C206B/projects-3-4-ambulance/project4/install -G Unix Makefiles
