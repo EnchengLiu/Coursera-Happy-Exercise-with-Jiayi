@@ -92,7 +92,7 @@ class TurtlebotBarrier(LyapunovBarrier):
         hDot = 2*(qe[0, 0] - qo[0, 0])*((qeDot[0, 0] - qoDot[0, 0])) + 2*(qe[1, 0] - qo[1, 0])*((qeDot[1, 0] - qoDot[1, 0]))
         
         #return the two derivatives and the barrier function
-        return ...
+        return 
     
 class TurtlebotBarrierDeadlock(TurtlebotBarrier):
     def __init__(self, stateDimn, inputDimn, dynamics, observerEgo, observerObstacle, buffer):
@@ -148,17 +148,19 @@ class TurtlebotBarrierDeadlock(TurtlebotBarrier):
         """
 
         #evaluate the CBF
-        h = ...
+        dist = np.linalg.norm(qe[:2] - qo[:2])
+        h =  dist**2 - (2*self.rt)**2
 
         #evaluate the derivative of the CBF
-        hDot = ... 
+        rel_vel = qeDot[:2] - qoDot[:2]
+        hDot = 2 * np.dot(qe[:2] - qo[:2], rel_vel)
 
         #using the linearized dynamics, return the second derivative of the CBF
         #this is given to you here - but can you derive it?
         hDDot = 2*(qeDot[0, 0] - qoDot[0, 0])**2 + 2*(qe[0, 0] - qo[0, 0])*((u[0] - zo[0, 0])) + 2*(qeDot[1, 0] - qoDot[1, 0])**2 + 2*(qe[1, 0] - qo[1, 0])*((u[1] - zo[1, 0]))
         
         #return the two derivatives and the barrier function
-        return ...
+        return [h, hDot, hDDot]
     
 class TurtlebotBarrierVision(TurtlebotBarrierDeadlock):
     def __init__(self, stateDimn, inputDimn, dynamics, observerEgo, lidarEgo, buffer):
