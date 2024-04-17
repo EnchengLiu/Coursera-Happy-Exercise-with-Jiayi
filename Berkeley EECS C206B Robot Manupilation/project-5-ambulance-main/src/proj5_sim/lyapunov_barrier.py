@@ -148,12 +148,13 @@ class TurtlebotBarrierDeadlock(TurtlebotBarrier):
         """
 
         #evaluate the CBF
-        dist = np.linalg.norm(qe[:2] - qo[:2])
-        h =  dist**2 - (2*self.rt)**2
+
+        h =  (qe[0, 0] - qo[0, 0])**2 + (qe[1, 0] - qo[1, 0])**2 - (2*self.rt)**2
 
         #evaluate the derivative of the CBF
         rel_vel = qeDot[:2] - qoDot[:2]
-        hDot = 2 * np.dot(qe[:2] - qo[:2], rel_vel)
+        # hDot = 2 * np.dot((qe[:2] - qo[:2]).T, rel_vel)
+        hDot = 2*(qe[0, 0] - qo[0, 0])*((qeDot[0, 0] - qoDot[0, 0])) + 2*(qe[1, 0] - qo[1, 0])*((qeDot[1, 0] - qoDot[1, 0]))
 
         #using the linearized dynamics, return the second derivative of the CBF
         #this is given to you here - but can you derive it?

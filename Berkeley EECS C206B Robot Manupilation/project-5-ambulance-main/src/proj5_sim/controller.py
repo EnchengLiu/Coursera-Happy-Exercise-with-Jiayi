@@ -247,23 +247,22 @@ class TurtlebotCBFQP:
         kX = self.nominalController.get_input()
 
         #set up the optimization problem
-        opti = ...
+        opti = ca.Opti()
 
         #define the decision variable
-        u = ...
+        u = opti.variable(2, 1)
 
         #define gamma for CBF tuning
-        gamma = ...
+        gamma = 0.1
 
         #apply the N-1 barrier constraints
         for bar in self.barriers:
             #get the values of h and hDot
-            h, hDot = ...
-
+            h, hDot = bar.eval(u, t)
             #compute the optimization constraint
-            opti.subject_to(...)
+            opti.subject_to(hDot + gamma*h >= 0)
 
-        cost = ...
+        cost = ca.mtimes((u - kX).T, (u - kX))
 
         opti.minimize(cost)
         option = {"verbose": False, "ipopt.print_level": 0, "print_time": 0}
@@ -335,27 +334,27 @@ class TurtlebotCBFQPDeadlock(TurtlebotCBFQP):
 
         #now, apply a CBF-QP over this z input using the simplified dynamics. This will be a second order CBF.
         #set up the optimization problem
-        opti = ...
+        opti = ca.Opti()
 
         #define the decision variable
-        u = ...
+        u = opti.variable(2, 1)
+        #u = [v, omega]
 
         #define a weighting variable for CBF-QP to encourage steering
-        H = np.diag([..., ...])
-
+        H = np.diag([1, 0.1])
         #define gamma for CBF tuning 
-        k1, k2 = ..., ...
+        k1, k2 = 1, 1
+        #pick k1, k2 s.t. eddot + k2 edot + k1 e = 0 has stable soln
 
         #apply the N-1 barrier constraints
         for bar in self.barriers:
             #get the values of h, hDot, hDDot
             h, hDot, hDDot = bar.eval(u, t)
-
             #compute the optimization constraint
-            opti.subject_to(...)
+            opti.subject_to(hDDot + k1*hDot + k2*h >= 0)
 
         #define the cost function
-        cost = ...
+        cost = ca.mtimes((u - zNom).T, ca.mtimes(H, u - zNom))
 
         opti.minimize(cost)
         option = {"verbose": False, "ipopt.print_level": 0, "print_time": 0}
