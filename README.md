@@ -8,6 +8,5 @@ Coding for Everyone: C and C++ Specialization
   [C++ For C Programmers, Part A](https://www.coursera.org/learn/c-plus-plus-a/)  
   [C++ For C Programmers, Part B](https://www.coursera.org/learn/c-plus-plus-b/)
 
-=================
-WaterMarker Adding Tools as EZtools
 -----------------
+**WaterMarker Adding Tools as EZtools**
