@@ -1,8 +1,0 @@
-prefix=/home/cc/ee106b/sp24/class/ee106b-abh/EECS-C206B/project2/install
-
-Name: proj2_pkg
-Description: Description of proj2_pkg
-Version: 0.1.0
-Cflags: -I${prefix}/include
-Libs: -L${prefix}/lib 
-Requires: 
