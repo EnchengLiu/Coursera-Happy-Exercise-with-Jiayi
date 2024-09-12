@@ -1,0 +1,1 @@
+Please follow CoC and finish this course on your own
